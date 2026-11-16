@@ -373,3 +373,27 @@ Sometimes certain symbols will break the 3MF output or cause meshing errors. If 
 - **STEP files** in `assets/`: [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) (NonCommercial)
 
 See [LICENSE](LICENSE) for full details.
+
+## Chocofi: one legend color per ZMK layer
+
+This fork can print each legend slot in its own filament and read the legends
+from a ZMK keymap (via the YAML that [keymap-drawer](https://github.com/caksoylar/keymap-drawer)
+produces).
+
+```bash
+# 1. Build chocofi/chocofi.json from the keymap (paths and layers: chocofi/settings.toml)
+uv run tools/zmk_to_legends.py chocofi/settings.toml
+
+# 2. Generate all keycaps plus one combined Bambu Studio plate
+uv run main.py --config chocofi/chocofi.json --plate results/chocofi_plate.3mf
+
+# Single keys for a test print
+uv run main.py --config chocofi/chocofi.json --only P02_E P13_F
+```
+
+- Every slot is exported as its own part (`legend_1` .. `legend_4`) with its own
+  filament (`legend_N_filament`, falling back to `legend_filament`).
+- `chocofi/glyphs.toml` maps keymap labels to printable glyphs and fonts.
+- `main.py` options: `--config` (TOML or JSON), `--only-rows`, `--only`, `--plate`, `--view`.
+- The keycap templates (MBK by darryldh, CC BY-NC) are referenced by path in
+  `chocofi/settings.toml` and are not part of this repository.

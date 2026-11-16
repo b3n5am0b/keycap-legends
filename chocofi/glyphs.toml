@@ -1,0 +1,14 @@
+# How keymap-drawer labels are printed on the keycaps.
+
+# Font used for every character listed in `symbols` (the default font from
+# settings.toml has no glyphs for them).
+symbol_font = "Segoe UI Symbol"
+symbols = "⎋⇥⎵⏎⌫⌦⇱⇲⇞⇟←↓↑→"
+
+# Label -> text printed instead. An empty string leaves the slot blank.
+[replace]
+
+# Label -> font size factor (multiplies the slot's font size).
+[scale]
+"⎵" = 1.2
+"⏎" = 1.2
