@@ -1,12 +1,14 @@
 # How keymap-drawer labels are printed on the keycaps.
 
-# Font used for every character listed in `symbols` (the default font from
-# settings.toml has no glyphs for them).
-symbol_font = "Segoe UI Symbol"
-symbols = "⎋⇥⎵⏎⌫⌦⇱⇲⇞⇟←↓↑→"
+# Font used for every character listed in `symbols`. Iosevka Nerd Font Mono (the
+# default font) already covers these, so this just keeps them on the same font.
+symbol_font = "Iosevka NFM"
+symbols = "⎋⇥␣⏎⌫⌦⇱⇲⇞⇟←↓↑→"
 
 # Label -> text printed instead. An empty string leaves the slot blank.
+# Iosevka has no U+23B5 (⎵); use the open-box space glyph ␣ (U+2423) instead.
 [replace]
+"⎵" = "␣"
 
 # Label -> font size factor (multiplies the slot's font size).
 [scale]

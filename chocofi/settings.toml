@@ -16,37 +16,45 @@ mbk_1u_homing = [13, 16]  # F, J
 mbk_15u = [32, 33]        # inner thumbs: Space, Enter
 
 [settings]
-font = "Bahnschrift"
+# OCCT/build123d family name for Iosevka Nerd Font Mono (NF=Nerd Font,
+# M=Mono). Alternatives: "Iosevka NF", "Iosevka NFP" (proportional).
+font = "Iosevka NFM"
 # Slot positions in mm from the cap center (+x right, +y away from the typist)
-primary_font_size = 5.5    # Base layer: large, top-left
-primary_x_offset = -3.0
-primary_y_offset = 2.2
-secondary_font_size = 4.0  # Num layer: small, top-right
-secondary_x_offset = 3.9
-secondary_y_offset = 3.3
-tertiary_font_size = 4.0   # Sym layer: small, bottom-right
-tertiary_x_offset = 3.9
-tertiary_y_offset = -3.3
+# All three legends share one font size (4.5 mm).
+primary_font_size = 10.0    # Base layer: top-left
+primary_x_offset = -4.5
+primary_y_offset = 4.0
+secondary_font_size = 8.0  # Num layer: top-right
+secondary_x_offset = 0.0
+secondary_y_offset = -2.0
+tertiary_font_size = 8.0   # Sym layer: bottom-right
+tertiary_x_offset = 3.5
+tertiary_y_offset = 4.75
 center_single_legend = false
 baseline_align = true       # keep ' high and _ low instead of centering every glyph
-bold_offset = 0.08         # thickens the Base legend strokes
-small_bold_offset = 0.03   # small legends: more would close the gaps in = and "
-max_carve_depth = 0.6      # MBK top wall is 1.47mm thick at the center
-# Bambu Studio filament slots (AMS Lite: 1-4)
+bold_offset = 0.0         # thickens the Base legend strokes
+small_bold_offset = 0.0   # small legends: more would close the gaps in = and "
+max_carve_depth = 0.4      # shallower carve -> fewer color layers, less purge
+# Bambu Studio filament slots (AMS Lite: 1-4).
+# Single legend color: all three slots share filament 2, so the print uses only
+# two filaments (body + legend) and purges far less at each top layer.
 body_filament = 1
 legend_1_filament = 2      # Base
 legend_2_filament = 3      # Num
-legend_3_filament = 4      # Sym
+legend_3_filament = 3      # Sym
 
-# MBK Choc keycaps by darryldh (CC BY-NC) - referenced, not part of this repo
+# Kailh choc cap (in-repo STEP). The source file is modeled stem-up with the
+# legend/typing face at Zmin (for upside-down printing); main.py carves the top
+# (max Z) face, so tools/flip_cap.py writes a 180deg-flipped copy with the typing
+# face up. The stem is part of the geometry (has_stem). One 1u cap for all keys.
 [step_files.mbk_1u]
-path = "../MBK Choc Low Profile Keycaps/files/MBK_Keycap_-_1u.step"
+path = "assets/my-kailh-v0.0.2_flipped.step"
 has_stem = true
 
 [step_files.mbk_1u_homing]
-path = "../MBK Choc Low Profile Keycaps/files/MBK_Keycap_-_1u_Homing.step"
+path = "assets/my-kailh-v0.0.2_flipped.step"
 has_stem = true
 
 [step_files.mbk_15u]
-path = "../MBK Choc Low Profile Keycaps/files/MBK_Keycap_-_1.5u.step"
+path = "assets/my-kailh-v0.0.2_flipped.step"
 has_stem = true

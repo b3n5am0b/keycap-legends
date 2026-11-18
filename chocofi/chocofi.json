@@ -1,0 +1,458 @@
+{
+  "settings": {
+    "font": "Iosevka NFM",
+    "primary_font_size": 10.0,
+    "primary_x_offset": -4.5,
+    "primary_y_offset": 4.0,
+    "secondary_font_size": 8.0,
+    "secondary_x_offset": 0.0,
+    "secondary_y_offset": -2.0,
+    "tertiary_font_size": 8.0,
+    "tertiary_x_offset": 3.5,
+    "tertiary_y_offset": 4.75,
+    "center_single_legend": false,
+    "baseline_align": true,
+    "bold_offset": 0.0,
+    "small_bold_offset": 0.0,
+    "max_carve_depth": 0.4,
+    "body_filament": 1,
+    "legend_1_filament": 2,
+    "legend_2_filament": 3,
+    "legend_3_filament": 3
+  },
+  "step_files": {
+    "mbk_1u": {
+      "path": "assets/my-kailh-v0.0.2_flipped.step",
+      "has_stem": true
+    },
+    "mbk_1u_homing": {
+      "path": "assets/my-kailh-v0.0.2_flipped.step",
+      "has_stem": true
+    },
+    "mbk_15u": {
+      "path": "assets/my-kailh-v0.0.2_flipped.step",
+      "has_stem": true
+    }
+  },
+  "legends": {
+    "mbk_1u": [
+      {
+        "primary": "Q",
+        "secondary": "*",
+        "tertiary": "!",
+        "name": "P00_Q",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "W",
+        "secondary": "7",
+        "tertiary": "\"",
+        "name": "P01_W",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "E",
+        "secondary": "8",
+        "tertiary": "'",
+        "name": "P02_E",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "R",
+        "secondary": "9",
+        "tertiary": "$",
+        "name": "P03_R",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "T",
+        "secondary": "+",
+        "tertiary": "%",
+        "name": "P04_T",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "Z",
+        "secondary": "⇱",
+        "secondary_font": "Iosevka NFM",
+        "tertiary": "&",
+        "name": "P05_Z",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "U",
+        "secondary": "⇟",
+        "secondary_font": "Iosevka NFM",
+        "tertiary": "=",
+        "name": "P06_U",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "I",
+        "secondary": "⇞",
+        "secondary_font": "Iosevka NFM",
+        "tertiary": "*",
+        "name": "P07_I",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "O",
+        "secondary": "⇲",
+        "secondary_font": "Iosevka NFM",
+        "tertiary": "+",
+        "name": "P08_O",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "P",
+        "secondary": "⌫",
+        "secondary_font": "Iosevka NFM",
+        "tertiary": "?",
+        "name": "P09_P",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "A",
+        "secondary": "/",
+        "tertiary": "@",
+        "name": "P10_A",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "S",
+        "secondary": "4",
+        "tertiary": "#",
+        "name": "P11_S",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "D",
+        "secondary": "5",
+        "tertiary": "{",
+        "name": "P12_D",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "G",
+        "secondary": "-",
+        "tertiary": "(",
+        "name": "P14_G",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "H",
+        "secondary": "←",
+        "secondary_font": "Iosevka NFM",
+        "tertiary": ")",
+        "name": "P15_H",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "K",
+        "secondary": "↑",
+        "secondary_font": "Iosevka NFM",
+        "tertiary": "}",
+        "name": "P17_K",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "L",
+        "secondary": "→",
+        "secondary_font": "Iosevka NFM",
+        "tertiary": "/",
+        "name": "P18_L",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "Ö",
+        "tertiary": "\\",
+        "name": "P19",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "Y",
+        "secondary": "=",
+        "tertiary": "~",
+        "name": "P20_Y",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "X",
+        "secondary": "1",
+        "tertiary": "`",
+        "name": "P21_X",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "C",
+        "secondary": "2",
+        "tertiary": "^",
+        "name": "P22_C",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "V",
+        "secondary": "3",
+        "tertiary": "|",
+        "name": "P23_V",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "B",
+        "secondary": ",",
+        "tertiary": "<",
+        "name": "P24_B",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "N",
+        "tertiary": ">",
+        "name": "P25_N",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "M",
+        "tertiary": "€",
+        "name": "P26_M",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": ",",
+        "tertiary": ";",
+        "name": "P27",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": ".",
+        "tertiary": ":",
+        "name": "P28",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "-",
+        "tertiary": "_",
+        "name": "P29",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "⎋",
+        "primary_font": "Iosevka NFM",
+        "secondary": ",",
+        "tertiary": "°",
+        "name": "P30",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "⇥",
+        "primary_font": "Iosevka NFM",
+        "secondary": ".",
+        "tertiary": "§",
+        "name": "P31",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "⌫",
+        "primary_font": "Iosevka NFM",
+        "name": "P34",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0
+      },
+      {
+        "primary": "⌦",
+        "primary_font": "Iosevka NFM",
+        "tertiary": "´",
+        "name": "P35",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      }
+    ],
+    "mbk_1u_homing": [
+      {
+        "primary": "F",
+        "secondary": "6",
+        "tertiary": "[",
+        "name": "P13_F",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      },
+      {
+        "primary": "J",
+        "secondary": "↓",
+        "secondary_font": "Iosevka NFM",
+        "tertiary": "]",
+        "name": "P16_J",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0,
+        "tertiary_x_offset": 3.5,
+        "tertiary_y_offset": 4.75
+      }
+    ],
+    "mbk_15u": [
+      {
+        "primary": "␣",
+        "primary_font": "Iosevka NFM",
+        "primary_font_size": 12.0,
+        "secondary": "0",
+        "name": "P32",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0,
+        "secondary_x_offset": 0.0,
+        "secondary_y_offset": -2.0
+      },
+      {
+        "primary": "⏎",
+        "primary_font": "Iosevka NFM",
+        "primary_font_size": 12.0,
+        "name": "P33",
+        "primary_x_offset": -4.5,
+        "primary_y_offset": 4.0
+      }
+    ]
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "settings": {
+    "font": "Iosevka NFM",
+    "primary_font_size": 4.5,
+    "primary_x_offset": -3.0,
+    "primary_y_offset": 2.2,
+    "secondary_font_size": 4.5,
+    "secondary_x_offset": 3.9,
+    "secondary_y_offset": 3.3,
+    "tertiary_font_size": 4.5,
+    "tertiary_x_offset": 3.9,
+    "tertiary_y_offset": -3.3,
+    "center_single_legend": false,
+    "baseline_align": true,
+    "bold_offset": 0.08,
+    "small_bold_offset": 0.03,
+    "max_carve_depth": 0.4,
+    "body_filament": 1,
+    "legend_1_filament": 2,
+    "legend_2_filament": 2,
+    "legend_3_filament": 2
+  },
+  "step_files": {
+    "mbk_1u": {
+      "path": "assets/my-kailh-v0.0.2_flipped.step",
+      "has_stem": true
+    }
+  },
+  "legends": {
+    "mbk_1u": [
+      {
+        "primary": "Q",
+        "secondary": "*",
+        "tertiary": "!",
+        "name": "Q_fs45",
+        "primary_font_size": 4.5,
+        "secondary_font_size": 4.5,
+        "tertiary_font_size": 4.5
+      },
+      {
+        "primary": "Q",
+        "secondary": "*",
+        "tertiary": "!",
+        "name": "Q_fs55",
+        "primary_font_size": 5.5,
+        "secondary_font_size": 5.5,
+        "tertiary_font_size": 5.5
+      },
+      {
+        "primary": "Q",
+        "secondary": "*",
+        "tertiary": "!",
+        "name": "Q_fs65",
+        "primary_font_size": 6.5,
+        "primary_x_offset": -2.7,
+        "primary_y_offset": 2.0,
+        "secondary_font_size": 6.5,
+        "secondary_x_offset": 3.2,
+        "secondary_y_offset": 2.6,
+        "tertiary_font_size": 6.5,
+        "tertiary_x_offset": 3.2,
+        "tertiary_y_offset": -2.6
+      }
+    ]
+  }
+}
