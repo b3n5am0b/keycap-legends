@@ -370,6 +370,12 @@ def parse_args() -> argparse.Namespace:
         help="overlap between neighbouring cradle tiles (mm); 0 = touching",
     )
     parser.add_argument(
+        "--emboss",
+        action="store_true",
+        help="raise the legends above the cap (relief, height = max_carve_depth) "
+        "instead of carving them in",
+    )
+    parser.add_argument(
         "--view", action="store_true", help="show each key in the ocp_vscode viewer"
     )
     return parser.parse_args()
@@ -399,6 +405,7 @@ def main() -> None:
     else:
         cfg = load_config(args.config)
     settings = cfg.settings
+    emboss = args.emboss or settings.emboss
     part_extruders: dict[str, int] = {
         "cap body": settings.body_filament,
         "stem": settings.stem_filament,
@@ -665,14 +672,23 @@ def main() -> None:
                 failed.append(str(key_name))
                 continue
             cut_solids, legends = carved
-            hole_cap: Solid = max(cut_solids, key=lambda s: s.volume)
-            dropped = [s for s in cut_solids if s is not hole_cap]
-            if dropped:
-                vols = [round(s.volume, 3) for s in dropped]
-                print(
-                    f"    WARNING: dropped {len(dropped)} island solids {vols} "
-                    f"for '{legend_desc}' - possible hole in a glyph counter!"
-                )
+            if emboss:
+                # Emboss: the carved inlay slab [T-d, T] lifted by d becomes a
+                # d-tall relief [T, T+d] sitting on the surface; body stays whole.
+                lift = Pos(0, 0, settings.max_carve_depth)
+                legends = {
+                    i: [lift * s for s in solids] for i, solids in legends.items()
+                }
+                hole_cap: Solid = working_cap  # type: ignore[assignment]
+            else:
+                hole_cap = max(cut_solids, key=lambda s: s.volume)
+                dropped = [s for s in cut_solids if s is not hole_cap]
+                if dropped:
+                    vols = [round(s.volume, 3) for s in dropped]
+                    print(
+                        f"    WARNING: dropped {len(dropped)} island solids {vols} "
+                        f"for '{legend_desc}' - possible hole in a glyph counter!"
+                    )
 
             # Mesher exports one 3MF object per solid and reads label/color
             # from each solid - booleans and mirror() return compounds, so

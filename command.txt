@@ -1,0 +1,19 @@
+# Generate the 6x6 cradle plate with per-key support + embossed legends.
+# Run inside the dev env:  nix-shell   (then the command below)
+
+uv run main.py \
+  --config chocofi/chocofi.json \
+  --config-table chocofi/chocofi.xlsx \
+  --with-support \
+  --emboss \
+  --cradle-plate results/chocofi_cradle_plate.3mf
+
+# Outputs:
+#   results/chocofi_cradle_plate.3mf   6x6 plate (caps + one merged cradle)
+#   results/K_*.3mf                    per-key caps, each incl. its 'support' part
+#
+# Defaults: --grid 6 6 ; --cradle-overlap 0 (cradle tiles touching, d=0).
+# Emboss relief height = max_carve_depth in chocofi.json settings.
+
+# Non-interactive one-liner (no manual nix-shell):
+# printf 'uv run main.py --config chocofi/chocofi.json --config-table chocofi/chocofi.xlsx --with-support --emboss --cradle-plate results/chocofi_cradle_plate.3mf\nexit\n' | nix-shell

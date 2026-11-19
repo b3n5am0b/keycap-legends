@@ -66,6 +66,9 @@ class LegendSettings:
     # in glyphs like = or "
     small_bold_offset: float = 0.0
     max_carve_depth: float = 0.8
+    # Raise the legends above the cap by max_carve_depth (a relief) instead of
+    # carving them in; the cap body is left whole.
+    emboss: bool = False
     # Align legends on the font baseline instead of centering each glyph's
     # outline; cap_height_ratio (capital height / font size) centers capitals
     baseline_align: bool = False
