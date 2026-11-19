@@ -84,6 +84,10 @@ offset (e.g. zeta).
 - Some fonts work better than others: **DIN 1451** and **Open Cherry** are recommended
 - If a symbol breaks meshing, try changing font size or using a Nerd Font icon instead
 - Use `uv run fonts.py` to list available fonts
+- Windows per-user fonts (`%LOCALAPPDATA%\Microsoft\Windows\Fonts`, e.g. Nerd Fonts) are
+  not scanned by OCCT; `utils/user_fonts.py` `register_user_fonts()` registers them (called
+  by `main.py` and `fonts.py`). Use the exact family name from `fonts.py` (e.g.
+  `IosevkaTerm NFM`) - an unknown name falls back to Arial, which renders symbols as boxes
 
 ## Project Overview
 
@@ -199,6 +203,17 @@ See README "Configuration" for the full commented reference. Summary: per-slot
 `*_font_size` and `*_x/y_offset` for the four slots (primary/secondary/tertiary/
 quaternary), `bold_offset` (mechanical bold, 0 = off), `max_carve_depth` (surface-
 following carve bound), and `body/legend/stem_filament` Bambu slots.
+
+### Excel config table
+
+`uv run main.py --config chocofi/chocofi.json --config-table chocofi/chocofi.xlsx`:
+the JSON holds the general config (settings, step_files), the Excel table holds the
+per-key legends and replaces the JSON's `legends` (`utils/config_table.py` merges both
+into a temp JSON for `load_config()`). Sheet `keys`, one row per key: `name | primary |
+secondary | tertiary | *_x/y_offset | *_font | *_font_size | row` (`row` = step_files
+group, e.g. `mbk_1u`; empty cell = not set). Export legends from a config with
+`uv run utils/config_table.py to-xlsx CONFIG OUT.xlsx`; merge with
+`to-json CONFIG IN.xlsx OUT.json`.
 
 ### STEP Files
 

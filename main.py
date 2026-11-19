@@ -37,8 +37,10 @@ from OCP.TopTools import TopTools_ListOfShape
 from config import load_config
 from models import SLOTS, LegendEntry, LegendSettings
 from utils.bambu_project import bambuify_3mf, write_plate_3mf
+from utils.config_table import merge_config_table
 from utils.mesher_patch import apply_mesher_triangulation_none_guard
 from utils.stl_to_step import convert_stl_to_step
+from utils.user_fonts import register_user_fonts
 
 # Preview colors per legend slot (the slicer assigns the real filaments)
 SLOT_COLORS: tuple[str, ...] = ("black", "red", "blue", "green")
@@ -303,6 +305,11 @@ def parse_args() -> argparse.Namespace:
         "--config", default="config.toml", help="TOML or JSON config file"
     )
     parser.add_argument(
+        "--config-table",
+        metavar="FILE",
+        help="per-key Excel (.xlsx) table; replaces the legends of --config",
+    )
+    parser.add_argument(
         "--only-rows", nargs="+", metavar="ROW", help="only process these row groups"
     )
     parser.add_argument(
@@ -323,6 +330,7 @@ def main() -> None:
     """Main entry point for keycap generation."""
     args = parse_args()
     apply_mesher_triangulation_none_guard()
+    register_user_fonts()
 
     show = None
     if args.view:
@@ -331,7 +339,16 @@ def main() -> None:
         set_defaults(reset_camera=Camera.CENTER, helper_scale=1, transparent=False)
 
     # Load configuration
-    cfg = load_config(args.config)
+    if args.config_table:
+        # General config + per-key table merged into a temp JSON config
+        json_path = merge_config_table(args.config, args.config_table)
+        try:
+            cfg = load_config(json_path)
+        finally:
+            json_path.unlink(missing_ok=True)
+        print(f"Loaded {args.config} with per-key table {args.config_table}")
+    else:
+        cfg = load_config(args.config)
     settings = cfg.settings
     part_extruders: dict[str, int] = {
         "cap body": settings.body_filament,
