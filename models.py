@@ -75,6 +75,8 @@ class LegendSettings:
     body_filament: int = 1
     legend_filament: int = 2
     stem_filament: int = 1
+    # Filament for the cradle object (the tiled keycapsupport) on a cradle plate
+    cradle_filament: int = 1
     # Per-slot filament (primary..quaternary); None falls back to legend_filament
     legend_1_filament: int | None = None
     legend_2_filament: int | None = None

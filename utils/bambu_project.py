@@ -271,3 +271,187 @@ def write_plate_3mf(
             "Metadata/model_settings.config",
             b'<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(cfg),
         )
+
+
+def _add_mesh_objects(
+    src_model: ET.Element,
+    resources: ET.Element,
+    start_id: int,
+    name: str | None,
+    skip: frozenset[str] = frozenset(),
+) -> tuple[list[tuple[int, str]], int]:
+    """Copy every mesh object of a source model into `resources`.
+
+    Mesh objects whose source name is in `skip` are left out. Strips
+    per-triangle material attributes (merged files drop the material
+    resources). Returns (list of (new id, label), next free id).
+    """
+    ns = f"{{{CORE_NS}}}"
+    parts: list[tuple[int, str]] = []
+    for obj in src_model.find(f"{ns}resources").findall(f"{ns}object"):
+        mesh = obj.find(f"{ns}mesh")
+        if mesh is None or obj.get("name") in skip:
+            continue
+        for tri in mesh.iter(f"{ns}triangle"):
+            for attr in ("pid", "p1", "p2", "p3"):
+                tri.attrib.pop(attr, None)
+        label = name or obj.get("name", "part")
+        new_obj = ET.SubElement(
+            resources,
+            f"{ns}object",
+            {"id": str(start_id), "type": "model", "name": label},
+        )
+        new_obj.append(mesh)
+        parts.append((start_id, label))
+        start_id += 1
+    return parts, start_id
+
+
+def write_cradle_plate(
+    cap_files: list[str] | list[Path],
+    support_file: str | Path,
+    out: Path | str,
+    part_extruders: dict[str, int],
+    cradle_extruder: int,
+    grid: tuple[int, int] = (6, 6),
+    overlap: float = 0.2,
+    bed_size: tuple[float, float] = (256.0, 256.0),
+) -> None:
+    """Grid plate of per-key caps plus one merged cradle from the support mesh.
+
+    Caps are laid out row-major on a ``grid`` (rows, cols). The cradle is a
+    single object: the support mesh (from ``support_file``) instanced at every
+    cell via component transforms, tiled edge-to-edge with ``pitch = support
+    footprint - overlap`` so neighbouring tiles weld in the slicer. Every cap
+    part keeps its filament from ``part_extruders``; the cradle uses
+    ``cradle_extruder``.
+    """
+    ns = f"{{{CORE_NS}}}"
+    ET.register_namespace("", CORE_NS)
+    root = ET.Element(f"{ns}model", {"unit": "millimeter", "xml:lang": "en-US"})
+    resources = ET.SubElement(root, f"{ns}resources")
+    build = ET.SubElement(root, f"{ns}build")
+    cfg = ET.Element("config")
+
+    next_id = 1
+
+    # Support mesh -> reusable object(s); footprint sets the grid pitch
+    with zipfile.ZipFile(Path(support_file)) as z:
+        s_model = ET.fromstring(z.read("3D/3dmodel.model").decode())
+        content_types = z.read("[Content_Types].xml")
+        rels = z.read("_rels/.rels")
+    sxs: list[float] = []
+    sys_: list[float] = []
+    for obj in s_model.find(f"{ns}resources").findall(f"{ns}object"):
+        mesh = obj.find(f"{ns}mesh")
+        if mesh is None:
+            continue
+        for v in mesh.iter(f"{ns}vertex"):
+            sxs.append(float(v.get("x")))
+            sys_.append(float(v.get("y")))
+    support_parts, next_id = _add_mesh_objects(s_model, resources, next_id, "cradle")
+    if not support_parts:
+        raise RuntimeError(f"No mesh in support file {support_file}")
+    scx, scy = (min(sxs) + max(sxs)) / 2, (min(sys_) + max(sys_)) / 2
+    pitch_x = (max(sxs) - min(sxs)) - overlap
+    pitch_y = (max(sys_) - min(sys_)) - overlap
+
+    rows, cols = grid
+    bx, by = bed_size[0] / 2, bed_size[1] / 2
+
+    def cell_offset(idx: int) -> tuple[float, float]:
+        """Translation of cell `idx` (row-major), sharing the support frame."""
+        r, c = divmod(idx, cols)
+        cx = bx + (c - (cols - 1) / 2) * pitch_x
+        cy = by + ((rows - 1) / 2 - r) * pitch_y
+        return cx - scx, cy - scy
+
+    def transform(tx: float, ty: float) -> str:
+        return f"1 0 0 0 1 0 0 0 1 {tx:.4f} {ty:.4f} 0"
+
+    # Each cap file -> its own assembly object placed at its grid cell
+    for idx, file in enumerate(cap_files):
+        file = Path(file)
+        with zipfile.ZipFile(file) as z:
+            model = ET.fromstring(z.read("3D/3dmodel.model").decode())
+        # Drop any per-cap 'support' part: the merged cradle replaces it.
+        parts, next_id = _add_mesh_objects(
+            model, resources, next_id, None, skip=frozenset({"support"})
+        )
+        if not parts:
+            raise RuntimeError(f"No mesh objects found in {file}")
+        assembly_id = next_id
+        next_id += 1
+        assembly = ET.SubElement(
+            resources, f"{ns}object", {"id": str(assembly_id), "type": "model"}
+        )
+        components = ET.SubElement(assembly, f"{ns}components")
+        obj_el = ET.SubElement(cfg, "object", {"id": str(assembly_id)})
+        ET.SubElement(obj_el, "metadata", {"key": "name", "value": file.stem})
+        ET.SubElement(obj_el, "metadata", {"key": "extruder", "value": "1"})
+        for part_id, label in parts:
+            ET.SubElement(components, f"{ns}component", {"objectid": str(part_id)})
+            part = ET.SubElement(
+                obj_el, "part", {"id": str(part_id), "subtype": "normal_part"}
+            )
+            ET.SubElement(part, "metadata", {"key": "name", "value": label})
+            ET.SubElement(
+                part,
+                "metadata",
+                {"key": "matrix", "value": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"},
+            )
+            ET.SubElement(
+                part,
+                "metadata",
+                {"key": "extruder", "value": str(part_extruders.get(label, 1))},
+            )
+        tx, ty = cell_offset(idx)
+        ET.SubElement(
+            build, f"{ns}item", {"objectid": str(assembly_id), "transform": transform(tx, ty)}
+        )
+
+    # Cradle: one object, the support instanced at every cell
+    cradle_id = next_id
+    next_id += 1
+    cradle = ET.SubElement(
+        resources, f"{ns}object", {"id": str(cradle_id), "type": "model"}
+    )
+    cradle_components = ET.SubElement(cradle, f"{ns}components")
+    for idx in range(rows * cols):
+        tx, ty = cell_offset(idx)
+        for sid, _ in support_parts:
+            ET.SubElement(
+                cradle_components,
+                f"{ns}component",
+                {"objectid": str(sid), "transform": transform(tx, ty)},
+            )
+    ET.SubElement(build, f"{ns}item", {"objectid": str(cradle_id)})
+    cradle_obj = ET.SubElement(cfg, "object", {"id": str(cradle_id)})
+    ET.SubElement(cradle_obj, "metadata", {"key": "name", "value": "cradle"})
+    ET.SubElement(cradle_obj, "metadata", {"key": "extruder", "value": str(cradle_extruder)})
+    for sid, _ in support_parts:
+        part = ET.SubElement(
+            cradle_obj, "part", {"id": str(sid), "subtype": "normal_part"}
+        )
+        ET.SubElement(part, "metadata", {"key": "name", "value": "cradle"})
+        ET.SubElement(
+            part,
+            "metadata",
+            {"key": "matrix", "value": "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"},
+        )
+        ET.SubElement(part, "metadata", {"key": "extruder", "value": str(cradle_extruder)})
+
+    _indent(cfg)
+    out = Path(out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
+        z.writestr("[Content_Types].xml", content_types)
+        z.writestr("_rels/.rels", rels)
+        z.writestr(
+            "3D/3dmodel.model",
+            b'<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(root),
+        )
+        z.writestr(
+            "Metadata/model_settings.config",
+            b'<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(cfg),
+        )

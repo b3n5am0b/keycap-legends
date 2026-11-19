@@ -35,13 +35,12 @@ baseline_align = true       # keep ' high and _ low instead of centering every g
 bold_offset = 0.0         # thickens the Base legend strokes
 small_bold_offset = 0.0   # small legends: more would close the gaps in = and "
 max_carve_depth = 0.4      # shallower carve -> fewer color layers, less purge
-# Bambu Studio filament slots (AMS Lite: 1-4).
-# Single legend color: all three slots share filament 2, so the print uses only
-# two filaments (body + legend) and purges far less at each top layer.
+# Bambu Studio filament slots (AMS Lite: 1-4). One color per legend:
+# body=1, Base=2, Num=3, Sym=4.
 body_filament = 1
 legend_1_filament = 2      # Base
 legend_2_filament = 3      # Num
-legend_3_filament = 3      # Sym
+legend_3_filament = 4      # Sym
 
 # Kailh choc cap (in-repo STEP). The source file is modeled stem-up with the
 # legend/typing face at Zmin (for upside-down printing); main.py carves the top

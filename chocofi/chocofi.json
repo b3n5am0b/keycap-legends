@@ -18,19 +18,19 @@
     "body_filament": 1,
     "legend_1_filament": 2,
     "legend_2_filament": 3,
-    "legend_3_filament": 3
+    "legend_3_filament": 4
   },
   "step_files": {
     "mbk_1u": {
-      "path": "assets/my-kailh-v0.0.2_flipped.step",
+      "path": "assets/kwsv1-flipped.step",
       "has_stem": true
     },
     "mbk_1u_homing": {
-      "path": "assets/my-kailh-v0.0.2_flipped.step",
+      "path": "assets/kwsv1-flipped.step",
       "has_stem": true
     },
     "mbk_15u": {
-      "path": "assets/my-kailh-v0.0.2_flipped.step",
+      "path": "assets/kwsv1-flipped.step",
       "has_stem": true
     }
   }

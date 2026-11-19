@@ -36,7 +36,7 @@ from OCP.TopTools import TopTools_ListOfShape
 
 from config import load_config
 from models import SLOTS, LegendEntry, LegendSettings
-from utils.bambu_project import bambuify_3mf, write_plate_3mf
+from utils.bambu_project import bambuify_3mf, write_cradle_plate, write_plate_3mf
 from utils.config_table import merge_config_table
 from utils.mesher_patch import apply_mesher_triangulation_none_guard
 from utils.stl_to_step import convert_stl_to_step
@@ -238,6 +238,28 @@ def resolve_slots(
     return slots
 
 
+def split_cap_support(shape: Part) -> tuple[Part, Part | None]:
+    """Split an imported keycap STEP into (keycap, support).
+
+    Newer keycap STEPs bundle two solids: the cap and a 'keycapsupport' cradle
+    piece. import_step does not keep the solid names, so the cap is identified
+    geometrically as the solid whose top (max Z) is highest - that top face is
+    where the legends are carved. Returns (shape, None) for single-solid STEPs,
+    leaving the old behavior unchanged.
+    """
+    solids = list(shape.solids())
+    if len(solids) < 2:
+        return shape, None
+    cap_solid = max(solids, key=lambda s: s.bounding_box().max.Z)
+    support_solids = [s for s in solids if s is not cap_solid]
+    support: Part = (
+        support_solids[0]
+        if len(support_solids) == 1
+        else Compound(children=support_solids)
+    )  # type: ignore[assignment]
+    return cap_solid, support  # type: ignore[return-value]
+
+
 def solids_of(shape: object) -> list[Solid]:
     """Solids of a boolean result (which may be None, a ShapeList or a shape)."""
     if shape is None:
@@ -321,6 +343,33 @@ def parse_args() -> argparse.Namespace:
         help="also write one combined Bambu Studio plate with all generated keys",
     )
     parser.add_argument(
+        "--cradle-plate",
+        metavar="FILE",
+        help="write a grid plate of all keys plus a merged cradle built from the "
+        "STEP's support solid (tiled edge-to-edge)",
+    )
+    parser.add_argument(
+        "--grid",
+        nargs=2,
+        type=int,
+        default=[6, 6],
+        metavar=("ROWS", "COLS"),
+        help="grid size for --cradle-plate (default: 6 6)",
+    )
+    parser.add_argument(
+        "--with-support",
+        action="store_true",
+        help="include the STEP's support solid as a part in each per-key 3MF "
+        "(e.g. to print a single cap in its own support)",
+    )
+    parser.add_argument(
+        "--cradle-overlap",
+        type=float,
+        default=0.0,
+        metavar="MM",
+        help="overlap between neighbouring cradle tiles (mm); 0 = touching",
+    )
+    parser.add_argument(
         "--view", action="store_true", help="show each key in the ocp_vscode viewer"
     )
     return parser.parse_args()
@@ -353,11 +402,14 @@ def main() -> None:
     part_extruders: dict[str, int] = {
         "cap body": settings.body_filament,
         "stem": settings.stem_filament,
+        "support": settings.cradle_filament,
         **{f"legend_{i}": settings.slot_filament(i) for i in range(1, len(SLOTS) + 1)},
     }
     Path("results").mkdir(exist_ok=True)
     written: list[str] = []
     failed: list[str] = []
+    # The keycapsupport solid (same for every key); tiled into the cradle plate
+    support_for_cradle: Part | None = None
 
     # Build stem geometry once
     choc_stem_base: Part = build_choc_stem()
@@ -388,12 +440,25 @@ def main() -> None:
                     "and no STL fallback"
                 )
                 continue
-        cap: Part = import_step(step_cfg.path)  # type: ignore[assignment]
+        imported: Part = import_step(step_cfg.path)  # type: ignore[assignment]
         if step_cfg.rotation != 0:
-            cap = Rot(0, 0, step_cfg.rotation) * cap
-        bbox = cap.bounding_box()
-        cap = Pos(-bbox.center().X, -bbox.center().Y, -bbox.min.Z) * cap
-        # Update bbox after repositioning
+            imported = Rot(0, 0, step_cfg.rotation) * imported
+        cap, support = split_cap_support(imported)
+        if support is not None:
+            # Center on the support (cradle) footprint and drop the whole stack
+            # onto z=0, moving cap and support together so they stay aligned
+            # when the support is tiled into a cradle on the plate.
+            sbb = support.bounding_box()
+            dz = min(sbb.min.Z, cap.bounding_box().min.Z)
+            move = Pos(-sbb.center().X, -sbb.center().Y, -dz)
+            cap = move * cap
+            support = move * support
+            if support_for_cradle is None:
+                support_for_cradle = support
+        else:
+            bbox = cap.bounding_box()
+            cap = Pos(-bbox.center().X, -bbox.center().Y, -bbox.min.Z) * cap
+        # Update bbox after repositioning (the keycap only)
         bbox = cap.bounding_box()
 
         choc_stem: Part | None = None
@@ -627,10 +692,19 @@ def main() -> None:
                     s.color = Color("gray")
                     s.label = "stem"
 
+            # Optionally keep the STEP's support solid with this cap (for a
+            # single cap printed in its own support, not the merged cradle).
+            support_solids: list[Solid] = []
+            if args.with_support and support is not None:
+                support_solids = list(support.solids())
+                for s in support_solids:
+                    s.color = Color("gray")
+                    s.label = "support"
+
             if show is not None:
                 try:
                     all_legends = [s for solids in legends.values() for s in solids]
-                    show([*hole_solids, *all_legends, *stem_solids])
+                    show([*hole_solids, *all_legends, *stem_solids, *support_solids])
                 except Exception as e:
                     print(f"    (viewer unavailable, skipping preview: {e})")
             try:
@@ -643,6 +717,10 @@ def main() -> None:
                 if stem_solids:
                     m.add_shape(
                         stem_solids, linear_deflection=0.06, angular_deflection=0.3
+                    )
+                if support_solids:
+                    m.add_shape(
+                        support_solids, linear_deflection=0.06, angular_deflection=0.3
                     )
                 filename = build_filename(entry, row_name)
                 m.write(filename)
@@ -659,6 +737,36 @@ def main() -> None:
     if args.plate and written:
         write_plate_3mf(sorted(written), args.plate, part_extruders)
         print(f"Plate written: {args.plate} ({len(written)} keycaps)")
+
+    if args.cradle_plate and written:
+        if support_for_cradle is None:
+            print(
+                "ERROR: --cradle-plate needs a STEP with a support solid "
+                "(two solids); none found - skipping"
+            )
+        else:
+            support_file = str(Path("results") / "_cradle_support.3mf")
+            sm: Mesher = Mesher(unit=Unit.MM)
+            sup_solids = list(support_for_cradle.solids())
+            for s in sup_solids:
+                s.color = Color("gray")
+                s.label = "cradle"
+            sm.add_shape(sup_solids, linear_deflection=0.06, angular_deflection=0.3)
+            sm.write(support_file)
+            rows, cols = args.grid
+            write_cradle_plate(
+                sorted(written),
+                support_file,
+                args.cradle_plate,
+                part_extruders,
+                settings.cradle_filament,
+                grid=(rows, cols),
+                overlap=args.cradle_overlap,
+            )
+            print(
+                f"Cradle plate written: {args.cradle_plate} "
+                f"({len(written)} caps, {rows}x{cols} grid)"
+            )
 
 
 if __name__ == "__main__":
